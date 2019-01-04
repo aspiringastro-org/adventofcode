@@ -2,18 +2,10 @@ defmodule Day1 do
     def final_frequency(input) do
         input
         |> String.split("\n", trim: true)
-        |> IO.inspect(label: "input")
         |> sum_frequencies(0)
     end
 
     defp sum_frequencies([ freq | frequencies ], current_frequency ) do
-        frequencies
-        |> IO.inspect(label: "frequencies")
-        freq
-        |> IO.inspect(label: "freq")
-        current_frequency
-        |> IO.inspect(label: "current_frequency")
-
         new_frequency = String.to_integer(freq) + current_frequency
         sum_frequencies(frequencies, new_frequency)
     end
@@ -43,7 +35,7 @@ case System.argv() do
             end
         end
 
-    input_file ->
+    input_file when input_file != [] ->
         input_file
         |> File.read!()
         |> Day1.final_frequency()
