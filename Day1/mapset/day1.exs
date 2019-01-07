@@ -24,7 +24,7 @@ defmodule Day1 do
             if Enum.member?(acc_frequencies, new_frequency) do
                 {:halt, new_frequency}
             else
-                {:cont, {new_frequency, MapSet.put(acc_frequencies, new_frequency)}
+                {:cont, {new_frequency, MapSet.put(acc_frequencies, new_frequency)}}
             end
         end)
     end
