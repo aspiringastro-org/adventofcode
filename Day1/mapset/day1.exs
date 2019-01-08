@@ -9,10 +9,28 @@ defmodule Day1 do
     end
 
     @doc """
-        Repeated frequency 
+        Returns the Repeated frequency. In some cases, the system will
+        reset back to first reading after iterating through arbitrary
+        lines of data. In such cases, there is a requirement to cycle the
+        input as follows:
+
+        Let's say there is an input like [1,2,3] - the system can reset in 
+        many ways such as:
+        [1,2,1,2,3] < - reset to first position after reading '2'
+        [1,2,3,1,2,3] < - reset to first position after reading entire list
+
+        To handle such cases, we use Stream.cycle() which provides an infinite
+        sequence from the provided input list
+        Then, we perform a `reduce_while` operation that continues until a frequency
+        match is found. It iterates from the current position of enumerable provided
+        by Stream.cycle() and calculates frequency. As the frequency is computed, it
+        is stored in `current_frequencies` and also inserted into the mapset 
+        `acc_frequencies` if it is not seen before. If the `current_frequency` is 
+        already a member of `acc_frequencies`, we have found a repeated frequency
 
     """
     def repeated_frequency(file_stream) do
+
         file_stream
         |> Stream.map(fn line ->
             {data, _leftover} = Integer.parse(line)
