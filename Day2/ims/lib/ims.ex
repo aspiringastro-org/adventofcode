@@ -7,7 +7,7 @@ defmodule Ims do
   def read_box_ids(input_stream) do
     input_stream
     |> Stream.map(fn x -> String.split(x, "\n", trim: true) end)
-    |> Enum.map(fn [x] -> map_letter_ids(x) end)    
+    |> Enum.map(fn [x] -> count_characters(x) end)    
   end
 
 
@@ -43,6 +43,22 @@ defmodule Ims do
     end)
   end
 
+  # More succint option to count characters that uses the Map.update
+  # method and further uses the compact notation of passing an anonymous
+  # function through the use of `&(&1 + 1)`
+  # A sample execution in iex shows:
+  #
+  # iex> &(&1 + 1)
+  # #Function<6.128620087/1 in :erl_eval.expr/5>
+  #
+  def count_characters(string) do
+    string
+    |> String.graphemes
+    |> Enum.reduce(%{}, fn codepoint, acc ->
+        Map.update(acc, codepoint, 1, &(&1 + 1))
+      end)
+  end
+  
   defp ids_match_count?(mapped_id, count) do
     mapped_id
     |> Enum.filter(fn {_k, v} -> v == count end)
