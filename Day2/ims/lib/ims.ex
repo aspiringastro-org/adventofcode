@@ -51,7 +51,7 @@ defmodule Ims do
   # iex> &(&1 + 1)
   # #Function<6.128620087/1 in :erl_eval.expr/5>
   #
-  def count_characters(string) do
+  def count_characters(string) when is_binary(string) do
     string
     |> String.graphemes
     |> Enum.reduce(%{}, fn codepoint, acc ->
