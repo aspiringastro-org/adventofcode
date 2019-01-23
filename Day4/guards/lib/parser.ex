@@ -34,9 +34,8 @@ defmodule ShiftParser do
         
     def parse(log) when is_binary(log) do
         case parsec_log(log) do
-            {:ok, [year, month, day, hour, min, {:shift, id}], "", _, _, _} -> {year, month, day, hour, min, id}
-            {:ok, [year, month, day, hour, min, :down], "", _, _, _} -> {year, month, day, hour, min, :down}
-            {:ok, [year, month, day, hour, min, :up], "", _, _, _} -> {year, month, day, hour, min, :up}
+            {:ok, [year, month, day, hour, min, {action, id}], "", _, _, _} -> {{year, month, day}, hour, min, {action, id}}
+            {:ok, [year, month, day, hour, min, action], "", _, _, _} -> {{year, month, day}, hour, min, action}
         end
     end
 
