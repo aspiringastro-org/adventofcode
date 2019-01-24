@@ -44,16 +44,31 @@ defmodule Guards do
   end
 
   defp max_minute_asleep_by_id(grouped_entries, id) do
-    all_mins =
+    frequency_map =
       for {^id, _, ranges} <- grouped_entries,
           range <- ranges,
           minute <- range,
-          do: minute
+          do: minute,
+          into: FrequencyMap.new()
 
-    Enum.reduce(all_mins, %{}, fn minute, acc ->
-      Map.update(acc, minute, 1, & &1 + 1)
+    frequency_map
+    |> FrequencyMap.max 
+  end
+
+  def group_by_minutes_and_id(grouped_entries) do
+    Enum.reduce(grouped_entries, %{}, fn {id, _date, _ranges}, minute_id_map ->
+      case minute_id_map do
+        %{^id => _} -> minute_id_map
+        %{} -> 
+          result = max_minute_asleep_by_id(grouped_entries, id)
+          case result do 
+            :error -> minute_id_map
+            {max_minute, count} -> Map.put(minute_id_map, id, {max_minute, count})
+          end
+      end
     end)
-    |> Enum.max_by(fn {_, count} -> count end)    
+    |> IO.inspect(label: "group_by_minutes_and_id")
+    |> Enum.max_by(fn {_, {_, count}} -> count end)
   end
 
   def part1(input) do
@@ -64,14 +79,21 @@ defmodule Guards do
       |> process_shift_logs
     
     {guard_id, _} =
-    grouped_entries
-    |> aggregate_asleep_time_by_id
-    |> max_asleep_id_and_mins
+      grouped_entries
+      |> aggregate_asleep_time_by_id
+      |> max_asleep_id_and_mins
 
-    {max_minute_asleep, _} = 
-    grouped_entries
-    |> max_minute_asleep_by_id(guard_id)
+    {max_minute_asleep, _} = max_minute_asleep_by_id(grouped_entries, guard_id)
 
     guard_id * max_minute_asleep
+  end
+
+  def part2(input) do
+    {id, {minute, _}} =
+      input
+      |> File.read!
+      |> process_shift_logs
+      |> group_by_minutes_and_id
+    id * minute
   end
 end
